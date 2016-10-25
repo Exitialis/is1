@@ -1,17 +1,16 @@
 function Node(name) {
-
     this.name = name;
 
     this.parent = null;
-    this.childs = [];
+    this.adj = [];
 }
 
-Node.prototype.removeChild = function(child) {
-    this.childs.slice(this.childs.indexOf(child), 1);
+Node.prototype.removeAdj = function(adj) {
+    this.adj.slice(this.adj.indexOf(adj), 1);
 };
 
-Node.prototype.addChild = function(child) {
-    this.childs.push(child);
+Node.prototype.addAdj = function(adj) {
+    this.adj.push(adj);
 };
 
 Node.prototype.setParent = function(parent) {

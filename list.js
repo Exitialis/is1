@@ -1,9 +1,14 @@
-function List() {
+function List(item) {
     this.list = [];
+    this.list.push(item);
 }
 
+List.prototype.first = function() {
+    return this.list[0];
+};
+
 List.prototype.shift = function() {
-    this.list.shift();
+    return this.list.shift();
 };
 
 List.prototype.unshift = function(item) {
