@@ -19,28 +19,44 @@ graph.linkNodes(4, 6);
 var open = new list(node1);
 var closed = new list();
 
-console.log(search(node1, 6));
+console.log(search(6));
 
 function search(name) {
     //Берем первую вершину из списка
+    var node = open.first();
+    var step = 1;
     do {
-        this.node = open.first();
+        node = open.first();
 
-        if (this.node.name == name) {
+        if (node.name == name) {
+            var list = findWay(node);
+            console.log(list);
             return true;
         }
 
         open.shift();
         closed.push(node);
-        this.node.adj.forEach(function(node) {
-            if ( open.check(node) || closed.check(node)) {
+        node.adj.forEach(function(node) {
+            if ( ! open.check(node) || ! closed.check(node)) {
                 open.push(node);
             }
         });
-    } while(this.node != null);
+    } while(node != null);
 }
 
+function findWay(node) {
 
+    var path = [];
+    path.unshift(node.name);
+
+    while (node.parent != null) {
+        path.unshift(node.parent.name);
+        node = node.parent;
+    }
+
+    return path;
+
+}
 
 
 
