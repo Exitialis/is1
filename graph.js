@@ -12,7 +12,7 @@ function Graph(graph) {
 
 Graph.prototype.addNode = function(name) {
     var node = new Node(name);
-    this.viva.addNode(name);
+    this.viva.addNode(name, {'name': name});
 
     this.graph.push(node);
     return node;
@@ -34,7 +34,34 @@ Graph.prototype.linkNodes = function(node1, node2) {
 };
 
 Graph.prototype.render = function() {
-    var renderer = viva.Graph.View.renderer(this.viva);
+
+    var layout = viva.Graph.Layout.forceDirected(this.viva, {
+        springLength : 20,
+        springCoeff : 0.0005,
+        dragCoeff : 0.02,
+        gravity : -1.2
+    });
+
+    var graphics = viva.Graph.View.svgGraphics();
+
+    graphics.node(function(node) {
+
+        // The function is called every time renderer needs a ui to display node
+        var circle = viva.Graph.svg('text')
+            .text(node.data.name);
+        return circle;
+    })
+        .placeNode(function(nodeUI, pos){
+            // Shift image to let links go to the center:
+            nodeUI.attr('x', pos.x).attr('y', pos.y);
+        });
+
+    var renderer = viva.Graph.View.renderer(this.viva, {
+        container: document.getElementById('graphDiv'),
+        graphics: graphics
+        //layout: layout
+    });
+
     renderer.run();
 };
 

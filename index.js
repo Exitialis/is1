@@ -1,64 +1,85 @@
 var list = require('./list.js');
 var Graph = require('./graph.js');
+var Vue = require('vue/dist/vue.js');
 
 var graph = new Graph();
 
-var node1 = graph.addNode(1),
-    node2 = graph.addNode(2),
-    node3 = graph.addNode(3);
-    node4 = graph.addNode(4);
-    node5 = graph.addNode(5);
-    node6 = graph.addNode(6);
+Vue = new Vue({
+    el: '#wrapper',
 
-graph.linkNodes(1, 2);
-graph.linkNodes(2, 3);
-graph.linkNodes(2, 4);
-graph.linkNodes(2, 5);
-graph.linkNodes(4, 6);
+    data: {
+        node: null,
+        link1: null,
+        link2: null,
+        nodes: [],
+        links: []
+    },
 
-var open = new list(node1);
-var closed = new list();
+    methods: {
+        addNode() {
+            var node = graph.addNode(this.node);
+            this.nodes.push(node);
+            this.node = null;
+            console.log(this.nodes);
+        },
+        addLink() {
+            var link = graph.linkNodes()
+        },
+        search(name) {
+            //Берем первую вершину из списка
+            var node = open.first();
+            var step = 1;
+            do {
+                node = open.first();
 
-console.log(search(6));
+                if (node.name == name) {
+                    var list = findWay(node);
+                    console.log(list);
+                    return true;
+                }
 
-function search(name) {
-    //Берем первую вершину из списка
-    var node = open.first();
-    var step = 1;
-    do {
-        node = open.first();
+                open.shift();
+                closed.push(node);
+                node.adj.forEach(function(node) {
+                    if ( ! open.check(node) || ! closed.check(node)) {
+                        open.push(node);
+                    }
+                });
+            } while(node != null);
+        },
+        findWay(node) {
 
-        if (node.name == name) {
-            var list = findWay(node);
-            console.log(list);
-            return true;
-        }
+            var path = [];
+            path.unshift(node.name);
 
-        open.shift();
-        closed.push(node);
-        node.adj.forEach(function(node) {
-            if ( ! open.check(node) || ! closed.check(node)) {
-                open.push(node);
+            while (node.parent != null) {
+                path.unshift(node.parent.name);
+                node = node.parent;
             }
-        });
-    } while(node != null);
-}
 
-function findWay(node) {
+            return path;
+        }
+    },
 
-    var path = [];
-    path.unshift(node.name);
+    watch: {
+        link1(newLink) {
+            if (this.link2 == newLink) {
+                this.link2 = null;
+            }
+        },
+        link2(newLink) {
+            console.log(this.link1, newLink);
+            if (this.link1 == newLink) {
+                this.link1 = null;
+            }
+        }
+    },
 
-    while (node.parent != null) {
-        path.unshift(node.parent.name);
-        node = node.parent;
-    }
+    /*created() {
 
-    return path;
+    }*/
+});
 
-}
-
-graph.render();
 
 
 
