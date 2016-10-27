@@ -58,6 +58,8 @@ function findWay(node) {
 
 }
 
+graph.render();
+
 
 
 
