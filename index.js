@@ -1,4 +1,4 @@
-var list = require('./list.js');
+var List = require('./list.js');
 var Graph = require('./graph.js');
 var Vue = require('vue/dist/vue.js');
 
@@ -12,7 +12,14 @@ Vue = new Vue({
         link1: null,
         link2: null,
         nodes: [],
-        links: []
+        links: [],
+        drawed: false,
+        open: null,
+        closed: null,
+        find_el: null,
+        result: null,
+        showOpen: null,
+        showClosed: null
     },
 
     methods: {
@@ -20,21 +27,31 @@ Vue = new Vue({
             var node = graph.addNode(this.node);
             this.nodes.push(node);
             this.node = null;
-            console.log(this.nodes);
         },
         addLink() {
-            var link = graph.linkNodes()
+            var link = graph.linkNodes(this.link1, this.link2);
+            this.links.push(link);
         },
-        search(name) {
+        render() {
+            if (! this.drawed) {
+                graph.render();
+                this.drawed = true;
+            }
+        },
+        bfSearch() {
+            var open = new List(this.nodes[0]);
+            var closed = new List();
+
             //Берем первую вершину из списка
             var node = open.first();
-            var step = 1;
+
             do {
                 node = open.first();
 
-                if (node.name == name) {
-                    var list = findWay(node);
-                    console.log(list);
+                if (node.name == this.find_el) {
+                    this.result = this.findWay(node);
+                    this.showOpen = open;
+                    this.showClosed = closed;
                     return true;
                 }
 
@@ -46,6 +63,35 @@ Vue = new Vue({
                     }
                 });
             } while(node != null);
+        },
+        dfSearch() {
+            var open = new List(this.nodes[0]);
+            var closed = new List();
+
+            var node = open.first();
+
+            do {
+                node = open.first();
+
+                if (node.name == this.find_el) {
+                    this.result = this.findWay(node);
+                    this.showOpen = open;
+                    this.showClosed = closed;
+                    return true;
+                }
+
+                open.shift();
+                closed.push(node);
+
+                node.adj.forEach(function(node) {
+                    if ( ! open.check(node) || ! closed.check(node)) {
+                        open.unshift(node);
+                    }
+                });
+            } while(node != null)
+        },
+        bfSearchRecursive(name) {
+
         },
         findWay(node) {
 
@@ -68,16 +114,11 @@ Vue = new Vue({
             }
         },
         link2(newLink) {
-            console.log(this.link1, newLink);
             if (this.link1 == newLink) {
                 this.link1 = null;
             }
         }
-    },
-
-    /*created() {
-
-    }*/
+    }
 });
 
 

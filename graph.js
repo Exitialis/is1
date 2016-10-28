@@ -45,11 +45,9 @@ Graph.prototype.render = function() {
     var graphics = viva.Graph.View.svgGraphics();
 
     graphics.node(function(node) {
-
         // The function is called every time renderer needs a ui to display node
-        var circle = viva.Graph.svg('text')
+        return viva.Graph.svg('text')
             .text(node.data.name);
-        return circle;
     })
         .placeNode(function(nodeUI, pos){
             // Shift image to let links go to the center:

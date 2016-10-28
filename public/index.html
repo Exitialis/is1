@@ -21,49 +21,84 @@
 </head>
 <body>
     <div id="graphDiv"></div>
-    <script>
-        function submit(event) {
-            console.log(event);
-            event.preventDefault();
-            console.log(event);
-        }
-    </script>
     <div id="wrapper" class="form">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <form @submit.prevent="addNode">
-                        <div class="form-group">
-                            <label>Узел:</label>
-                            <input v-model="node" class="form-control" type="text">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Узел:</label>
+                                    <input v-model="node" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <label>&nbsp;</label>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success">Добавить</button>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Связать</button>
                     </form>
-                    <form action="">
+                    <form @submit.prevent="addLink">
                         <div class="form-group">
                             <label>Связь:</label>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <select name="" v-model="link1" class="form-control">
+                                    <select v-model="link1" class="form-control">
                                         <option v-for="node in nodes" :value="node.name">{{ node.name }}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <select name="" v-model="link2" class="form-control">
+                                    <select v-model="link2" class="form-control">
                                         <option v-for="node in nodes" :value="node.name">{{ node.name }}</option>
                                     </select>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 10px;">
+                                    <button class="btn btn-success">Связать</button>
                                 </div>
                             </div>
                         </div>
                     </form>
+                    <button @click.prevent="render" class="btn btn-primary">Отрисовать</button>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Результат:
+                            <p>
+                                <span v-for="(res, index) in result">{{ res }}<i v-if="index < (result.length - 1)">-></i></span>
+                            </p>
+                        </div>
+                        <div v-if="showOpen" class="col-md-4">
+                            Open:
+                            <span v-for="(node, index) in showOpen.list"><i v-if="!!node">{{ node.name }} <i v-if="index < (node.length - 1)">,</i></i></span>
+                        </div>
+                        <div v-if="showClosed" class="col-md-4">
+                            Closed:
+                            <span v-for="(node, index) in showClosed.list"><i v-if="!!node">{{ node.name }} <i v-if="index < (node.length - 1)">,</i></i></span>
+                        </div>
+                    </div>
 
+                    <form action="">
+                        <div class="form-group">
+                            <label>Найти:</label>
+                            <input v-model="find_el" type="text" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button @click.prevent="bfSearch" class="btn btn-primary">Поиск в ширину</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button @click.prevent="dfSearch" class="btn btn-primary">Поиск в глубину</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button @click.prevent="dfSearchRecursive" class="btn btn-primary">Рекурсивный поиск в глубину</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
-
         </div>
-
-
     </div>
     <script src="js/index.js"></script>
 
