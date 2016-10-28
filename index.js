@@ -19,7 +19,8 @@ Vue = new Vue({
         find_el: null,
         result: null,
         showOpen: null,
-        showClosed: null
+        showClosed: null,
+        closedList: null
     },
 
     methods: {
@@ -63,6 +64,8 @@ Vue = new Vue({
                     }
                 });
             } while(node != null);
+            this.result = ['Не удалось найти путь'];
+            return false;
         },
         dfSearch() {
             var open = new List(this.nodes[0]);
@@ -88,11 +91,38 @@ Vue = new Vue({
                         open.unshift(node);
                     }
                 });
-            } while(node != null)
+            } while(node != null);
+            this.result = ['Не удалось найти путь'];
+            return false;
         },
-        bfSearchRecursive(name) {
+        dfSearchRecursive() {
+            this.closedList = new List();
+
+            this.recursive(this.nodes[0]);
 
         },
+        recursive(node) {
+            var vm = this;
+
+            vm.closedList.push(node);
+            if (node.name == vm.find_el) {
+                vm.result = vm.findWay(node);
+                vm.showClosed = vm.closedList;
+                return true;
+            }
+
+
+            node.adj.forEach(function(node) {
+                if ( ! vm.closedList.check(node)) {
+                    if (vm.recursive(node) == true) {
+                        vm.result = vm.findWay(node);
+                        vm.showClosed = vm.closedList;
+                        return true;
+                    }
+                }
+            });
+        },
+        //Пройти по родителям и найти путь до корневого элемента.
         findWay(node) {
 
             var path = [];
